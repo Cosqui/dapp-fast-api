@@ -76,14 +76,13 @@ def put_empleados(empleado: EmpleadoBase, db: database.SessionLocal = Depends(ge
     comercio = request[0]
     if not uuid_empleado:
         raise HTTPException(
-            NoEmpleadoError(),
-            detail="KEy")
+            status_code=404,
+            detail="KEy required")
 
-    try:
-        emp = comercio.empleados.filter(Empleado.uuid == uuid_empleado).first()
-    except:
+    emp = comercio.empleados.filter(Empleado.uuid == uuid_empleado).first()
+    if not emp:
         raise HTTPException(
-            InvalidEmpleadoError(),
+            status_code=404,
             detail="Do not exist employee")
     emp.nombre = empleado.nombre
     emp.apelldios = empleado.apellidos
@@ -105,14 +104,13 @@ def delete_empleados(db: database.SessionLocal = Depends(get_db),
     comercio = request[0]
     if not uuid_empleado:
         raise HTTPException(
-            NoEmpleadoError(),
+            status_code=404,
             detail="KEy required")
 
-    try:
-        emp = comercio.empleados.filter(Empleado.uuid == uuid_empleado).first()
-    except:
+    emp = comercio.empleados.filter(Empleado.uuid == uuid_empleado).first()
+    if not emp:
         raise HTTPException(
-            InvalidEmpleadoError(),
+            status_code=404,
             detail="Do not exist employee")
     emp_delete = db.merge(emp)
     db.delete(emp_delete)
