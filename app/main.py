@@ -77,7 +77,7 @@ def put_empleados(empleado: EmpleadoBase, db: database.SessionLocal = Depends(ge
     if not uuid_empleado:
         raise HTTPException(
             status_code=404,
-            detail="KEy required")
+            detail="Key no valid")
 
     emp = comercio.empleados.filter(Empleado.uuid == uuid_empleado).first()
     if not emp:
@@ -105,7 +105,7 @@ def delete_empleados(db: database.SessionLocal = Depends(get_db),
     if not uuid_empleado:
         raise HTTPException(
             status_code=404,
-            detail="KEy required")
+            detail="Key not valid")
 
     emp = comercio.empleados.filter(Empleado.uuid == uuid_empleado).first()
     if not emp:
