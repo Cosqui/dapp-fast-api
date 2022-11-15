@@ -1,12 +1,13 @@
 from sqlite3 import IntegrityError
+
+import sqlalchemy
 from app.database.database import Base
 from fastapi import Depends, FastAPI, HTTPException, status
 from app.authentication import get_current_username
 from app.models import Comercio, Empleado
 from app.database import database
 from app.schemas import ComercioBase, EmpleadoBase
-from app.exceptions import (DuplicatedPinError,
-                            InvalidEmpleadoError, NoEmpleadoError)
+
 
 app = FastAPI()
 
@@ -61,12 +62,12 @@ def post_empleados(empleado: EmpleadoBase, db: database.SessionLocal = Depends(g
     try:
         db.add(new_empleado)
         db.commit()
-        db.refresh(new_empleado)
-    except IntegrityError:
+        db.refresh(new_empleado)    
+    except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
-            DuplicatedPinError(),
+            status_code=409,
             detail="Internal Server Integrity")
-
+    
     return new_empleado
 
 
@@ -90,10 +91,10 @@ def put_empleados(empleado: EmpleadoBase, db: database.SessionLocal = Depends(ge
     db.merge(emp)
     try:
         db.commit()
-    except IntegrityError:
+    except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
-            DuplicatedPinError(),
-            detail="Do not exist employee")
+            status_code=409,
+            detail="Internal Server Integrity")
 
     return emp
 

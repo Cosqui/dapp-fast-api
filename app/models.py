@@ -32,6 +32,7 @@ class Empleado(Base):
     comercio = relationship("Comercio", back_populates="empleados")
     fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
     activo =  Column(Boolean,default=True)
+    __table_args__ = (UniqueConstraint('pin', 'comercio_id', name='unique_constraint_pin_comercio'), )
 
 
 
